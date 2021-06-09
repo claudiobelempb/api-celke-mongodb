@@ -1,4 +1,5 @@
 import * as yup from "yup";
+import { hash } from "bcryptjs";
 import User from "../models/User";
 
 class UserController {
@@ -53,10 +54,12 @@ class UserController {
       });
     }
 
+    const hashPassword = await hash(password, 8);
+
     const user = await User.create({
       name,
       email,
-      password,
+      password: hashPassword,
     }, (error) => {
       if(error) return response.status(400).json({
         error: true,

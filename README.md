@@ -7,6 +7,7 @@ yarn add uuid -S
 yarn add mongodb -S
 yarn add mongoose -S
 yarn add yup -S
+yarn add bcryptjs -S
 
 
 Dependence - D
