@@ -8,6 +8,7 @@ yarn add mongodb -S
 yarn add mongoose -S
 yarn add yup -S
 yarn add bcryptjs -S
+yarn add jsonwebtoken -S
 
 
 Dependence - D
