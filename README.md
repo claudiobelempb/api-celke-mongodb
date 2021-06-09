@@ -6,6 +6,7 @@ yarn add express -S
 yarn add uuid -S
 yarn add mongodb -S
 yarn add mongoose -S
+yarn add yup -S
 
 
 Dependence - D

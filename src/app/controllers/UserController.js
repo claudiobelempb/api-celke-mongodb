@@ -1,3 +1,4 @@
+import * as yup from "yup";
 import User from "../models/User";
 
 class UserController {
@@ -14,25 +15,28 @@ class UserController {
   async store(request, response){
     const {name, email, password } = request.body;
 
-    if(!name || typeof name === undefined || typeof name === null) {
+    /*if(!name || typeof name === undefined || typeof name === null) {
       return response.status(400).json({
         error: true,
         message: "Field name required!",
         code: 102,
       });
-    }
+    }*/
 
-    if(!email || typeof email === undefined || typeof email === null) {
+    const schema = yup.object().shape({
+      name: yup.string().required(),
+      email: yup.string().email().required(),
+      password: yup.string().required().min(6),
+    });
+
+    if(!(await schema.isValid({
+      name,
+      email,
+      password
+    }))) {
       return response.status(400).json({
         error: true,
-        message: "Field email required!",
-      })
-    }
-
-    if(!password || typeof password === undefined || typeof password === null) {
-      return response.status(400).json({
-        error: true,
-        message: "Field password required!",
+        message: "Field invalid!",
         code: 103,
       });
     };
