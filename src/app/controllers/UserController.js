@@ -1,5 +1,6 @@
 import * as yup from "yup";
 import { hash } from "bcryptjs";
+import mongoose from "mongoose";
 import User from "../models/User";
 
 class UserController {
@@ -12,9 +13,26 @@ class UserController {
     const users = await User.find();
     return response.json(users)
   }
+
+  async show(request, response) {
+    const { id } = request.params;
+    const user = await User.findOne({ _id: id });
+
+    if(!user) {
+      return response.status(400).json({
+        error: true,
+        message: 'User not found!',
+        code: 112,
+      });
+    }
+
+    delete(user.password);
+
+    return response.json({user});
+  }
   
   async store(request, response){
-    const {name, email, password } = request.body;
+    const { name, email, password } = request.body;
 
     /*if(!name || typeof name === undefined || typeof name === null) {
       return response.status(400).json({
@@ -42,11 +60,13 @@ class UserController {
       });
     };
 
-    const emailAlreadyExists = await User.findOne({
+    const user = await User.findOne({
       email,
     });
 
-    if(emailAlreadyExists){
+    console.log(user);
+
+    if(user){
       return response.status(400).json({
         error: true,
         message: "Email already exists!",
@@ -56,7 +76,7 @@ class UserController {
 
     const hashPassword = await hash(password, 8);
 
-    const user = await User.create({
+    User.create({
       name,
       email,
       password: hashPassword,
@@ -71,6 +91,59 @@ class UserController {
         message: "User create success!",
         data: user,
       });
+    });
+  }
+
+  async delete(request, response) {
+    const { id } = request.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        error: true,
+        message: "User not found!",
+        code: 110,
+      });
+    }
+    
+    const user = await User.findOne({_id: id});
+
+    if(!user){
+      return response.status(400).json({
+        error: true,
+        message: "User not found!",
+        code: 111,
+      });
+    }
+
+    await User.deleteOne(user);
+
+    return response.json({
+      error: false,
+      message: "User delete success!",
+      code: 106,
+    });
+  }
+
+  async update(request, response){
+
+    console.log(request.userId);
+    const { id } = request.params;
+    const { name, email } = request.body;
+
+    const user = await User.findOne({_id: id});
+
+    if(!user){
+      return response.status(400).json({
+        error: true,
+        message: "User not found!",
+        code: 213,
+      });
+    }
+
+    return response.status(201).json({
+      error: false,
+      message: "User update success!",
+      code: 212,
     });
   }
 

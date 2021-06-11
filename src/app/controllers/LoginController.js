@@ -44,6 +44,11 @@ class LoginController {
         code: 304,
       });
     }
+    const token = configJwt.sign(
+      {id: user._id}, 
+      configAuth.secret, 
+      {expiresIn: configAuth.expiresIn}
+    );
 
     return response.status(201).json({
       user: {
@@ -51,7 +56,7 @@ class LoginController {
         name: user.name,
         email,
       },
-      token: configJwt.sign({id: user._id}, configAuth.secret, {expiresIn: configAuth.expiresIn}),
+      token,
     });
   }
 
