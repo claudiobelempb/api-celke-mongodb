@@ -32,7 +32,8 @@ class UserController {
   async show(request, response) {
     try{
       const { id } = request.params;
-      const user = await User.findOne({ _id: id }).select('-password');
+      /* const user = await User.findOne({ _id: id }).select('-password'); */
+      const user = await User.findOne({ _id: id }, '_id name email createdAt updatedAt');
 
       if(!user) {
         return response.status(400).json({
