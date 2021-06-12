@@ -18,6 +18,7 @@ yarn add bcryptjs -S
 #
 yarn add jsonwebtoken -S
 #
+yarn add mongoose-paginate-v2 -S
 #
 #
 Dependence - D

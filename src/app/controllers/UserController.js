@@ -11,7 +11,11 @@ class UserController {
 
   async index(request, response) {
     try{
-      const users = await User.find().select('-password');
+      const { page = 1 } = request.query;
+      const { limit = 2 } = request.query;
+      // const users = await User.find().select('-password');
+      const users = await User.paginate({}, {select: '_id name email', page, limit});
+
       return response.json({
         error: false,
         users,
@@ -41,10 +45,10 @@ class UserController {
       return response.json({user});
     }catch(error){
       return response.status(400).json({
-        error: true,
-        message: 'User not found!',
-        code: 112,
-      });
+          error: true,
+          message: 'User not found!',
+          code: 112,
+        });
     }
   }
   
