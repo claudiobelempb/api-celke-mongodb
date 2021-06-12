@@ -10,25 +10,42 @@ class UserController {
   }
 
   async index(request, response) {
-    const users = await User.find();
-    return response.json(users)
+    try{
+      const users = await User.find().select('-password');
+      return response.json({
+        error: false,
+        users,
+      });
+    }catch(error){
+      return response.status(400).json({
+        error: true,
+        message: "Not default!",
+        code: 116,
+      });
+    }
   }
 
   async show(request, response) {
-    const { id } = request.params;
-    const user = await User.findOne({ _id: id });
+    try{
+      const { id } = request.params;
+      const user = await User.findOne({ _id: id }).select('-password');
 
-    if(!user) {
+      if(!user) {
+        return response.status(400).json({
+          error: true,
+          message: 'User not found!',
+          code: 112,
+        });
+      }
+
+      return response.json({user});
+    }catch(error){
       return response.status(400).json({
         error: true,
         message: 'User not found!',
         code: 112,
       });
     }
-
-    delete(user.password);
-
-    return response.json({user});
   }
   
   async store(request, response){
@@ -64,7 +81,7 @@ class UserController {
       email,
     });
 
-    console.log(user);
+    // console.log(user);
 
     if(user){
       return response.status(400).json({
