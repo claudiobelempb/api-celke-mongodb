@@ -12,7 +12,7 @@ class UserController {
   async index(request, response) {
     try{
       const { page = 1 } = request.query;
-      const { limit = 2 } = request.query;
+      const { limit = 10 } = request.query;
       // const users = await User.find().select('-password');
       const users = await User.paginate({}, {select: '_id name email', page, limit});
 
@@ -116,6 +116,89 @@ class UserController {
     });
   }
 
+  async update(request, response){
+    // search field _id 
+    // const  _id  = request.userId;
+    // console.log(_id);
+    // search field name, email, password
+    const { _id, name, email, password } = request.body;
+    // console.log(name, email, password);
+    // valid fields is yup
+    const schema = yup.object().shape({
+      _id: yup.string().required(),
+      name: yup.string(),
+      email: yup.string().email(),
+      password: yup.string().min(6),
+    });
+
+    if(!(await schema.isValid({
+      _id,
+      name,
+      email,
+      password,
+    }))){
+      return response.status(400).json({
+        error: true,
+        message: "Field required!",
+        code: 116,
+      })
+    }
+    // verify se o user already exists
+    const user = await User.findOne({_id});
+    // console.log(user);
+
+    if(!user){
+      return response.status(400).json({
+        error: true,
+        message: "User already exists!",
+        code: 213,
+      });
+    }
+
+    if(email !== user.email) {
+      const userEmailExists = await User.findOne({email});
+      if(userEmailExists){
+        return response.status(400).json({
+          error: true,
+          message: "Email already exists",
+          code: 214,
+        });
+      }
+    }
+
+    let newPassword = password;
+    if(password !== user.password) {
+      newPassword = await hash(password, 8);
+    }
+    
+    // valid password
+    const data = {
+      _id,
+      name,
+      email,
+      password: newPassword,
+    }
+    
+    // update
+
+    try{
+      await User.updateOne({_id}, data);
+
+      return response.status(201).json({
+        error: false,
+        message: "User update success!",
+        code: 212,
+      });
+      
+    }catch(error) {
+      return response.status(201).json({
+        error: true,
+        message: "User update error!",
+        code: 212,
+      });
+    }
+  }
+
   async delete(request, response) {
     const { id } = request.params;
 
@@ -143,29 +226,6 @@ class UserController {
       error: false,
       message: "User delete success!",
       code: 106,
-    });
-  }
-
-  async update(request, response){
-
-    console.log(request.userId);
-    const { id } = request.params;
-    const { name, email } = request.body;
-
-    const user = await User.findOne({_id: id});
-
-    if(!user){
-      return response.status(400).json({
-        error: true,
-        message: "User not found!",
-        code: 213,
-      });
-    }
-
-    return response.status(201).json({
-      error: false,
-      message: "User update success!",
-      code: 212,
     });
   }
 
