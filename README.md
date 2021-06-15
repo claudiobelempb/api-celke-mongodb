@@ -20,6 +20,8 @@ yarn add jsonwebtoken -S
 #
 yarn add mongoose-paginate-v2 -S
 #
+yarn add multer -S
+#
 #
 Dependence - D
 #

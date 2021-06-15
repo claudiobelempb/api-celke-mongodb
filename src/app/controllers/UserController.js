@@ -14,7 +14,7 @@ class UserController {
       const { page = 1 } = request.query;
       const { limit = 10 } = request.query;
       // const users = await User.find().select('-password');
-      const users = await User.paginate({}, {select: '_id name email', page, limit});
+      const users = await User.paginate({}, {select: '_id name email avatarName', page, limit});
 
       return response.json({
         error: false,
@@ -33,7 +33,7 @@ class UserController {
     try{
       const { id } = request.params;
       /* const user = await User.findOne({ _id: id }).select('-password'); */
-      const user = await User.findOne({ _id: id }, '_id name email createdAt updatedAt');
+      const user = await User.findOne({ _id: id }, '_id name email avatarName createdAt updatedAt');
 
       if(!user) {
         return response.status(400).json({

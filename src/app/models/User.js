@@ -13,7 +13,15 @@ const User = new mongoose.Schema({
   password: {
     type: String,
     required: true,
-  }
+  },
+  avatarOriginalName: {
+    type: String,
+    required: false,
+  },
+  avatarName: {
+    type: String,
+    required: false,
+  },
 } , {
   timestamps: true,
 });
