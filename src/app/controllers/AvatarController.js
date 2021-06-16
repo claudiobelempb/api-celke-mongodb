@@ -1,4 +1,6 @@
 import fs from 'fs';
+import path from 'path';
+import { uploadCelke } from '../middlewares/upload-celke'
 import User from '../models/User';
 
 class AvatarController {
@@ -8,35 +10,55 @@ class AvatarController {
     // console.log(_id);
     const { originalname, filename } = request.file;
 
-    const avatar = {
+    const avatarImage = {
       avatarOriginalName: originalname,
       avatarName: filename,
     }
-    console.log(avatar);
+    // console.log(avatarImage);
 
-    const user = await User.findOne({_id }, '_id avatar');
-
-    if(!user){
+    await User.findOne({_id }, '_id avatarName').then((user) => {
+      request.avatarImgUser = user.avatarName;
+    }).catch((error) => {
       return response.status(400).json({
         error: true,
         message: "User not found!",
         code: 130,
       });
-    }
+    });
 
-    const data = await User.updateOne({ _id }, avatar);
-
-    if(!data){
-      return response.status(400).json({
+    await User.updateOne({ _id }, avatarImage, (error) => {
+      if(error) return response.status(400).json({
         error: true,
-        message: "User not found!",
-        code: 131,
+        message: "Avatar cannot be updated!",
+        code: 140,
       });
-    }
+    });
+
+    // await fs.promises.unlink(path.join(uploadCelke.directory, request.avatarImgUser));
+
+    const imgAntiga = uploadCelke.destination + "/" + request.avatarImgUser;
+    console.log(imgAntiga);
+    
+    fs.access(imgAntiga, (error) => {
+      if(!error){
+        fs.unlink(imgAntiga, (erro) => {
+          
+        });
+      }
+    });
+
+    // const avatarDestination = destination + "/" + avatar.avatarName;
+    // fs.access(avatarDestination, (error) => {
+    //   if(!error){
+    //     fs.unlink(avatarDestination, (error) => {
+
+    //     });
+    //   }
+    // });
 
     return response.json({
       error: false,
-      message:" Avatar created success!",
+      message:" Avatar success updated!",
       code: 127,
     });
   }
