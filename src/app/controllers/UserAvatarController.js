@@ -8,6 +8,8 @@ class UserAvatarController {
   async update(request, response){
     const _id = request.userId;
 
+    console.log(request.file);
+
     if(!request.file){
       return response.status(400).json({
         error: true,
@@ -45,7 +47,6 @@ class UserAvatarController {
       error: false,
       message:" Avatar success updated!",
       code: 127,
-      avatar,
     });
   }
 }

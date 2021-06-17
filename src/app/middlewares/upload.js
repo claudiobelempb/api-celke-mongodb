@@ -16,6 +16,13 @@ const upload = {
       return callback(null, fileName);
     },
   }),
+  fileFilter: (request, file, callback ) => {
+    if(file.mimetype === "image/jpeg" || file.mimetype === "image/jpg" || file.mimetype === "image/png") {
+      return callback(null, true);
+    } else {
+      return callback(null, false);
+    }
+  }
 }
 
 export { upload };

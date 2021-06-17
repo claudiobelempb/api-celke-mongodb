@@ -3,6 +3,8 @@ import { hash } from "bcryptjs";
 import mongoose from "mongoose";
 import User from "../models/User";
 
+import config from '../../config/config';
+
 class UserController {
 
   constructor(){
@@ -33,7 +35,7 @@ class UserController {
     try{
       const { id } = request.params;
       /* const user = await User.findOne({ _id: id }).select('-password'); */
-      const user = await User.findOne({ _id: id }, '_id name email avatarName createdAt updatedAt');
+      const user = await User.findOne({ _id: id }, '_id name email avatar createdAt updatedAt');
 
       if(!user) {
         return response.status(400).json({
@@ -43,7 +45,10 @@ class UserController {
         });
       }
 
-      return response.json({user});
+      return response.json({
+        user,
+        url: `${config.url}/files/users/${user.avatar}`,
+      });
     }catch(error){
       return response.status(400).json({
           error: true,
