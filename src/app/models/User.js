@@ -14,14 +14,10 @@ const User = new mongoose.Schema({
     type: String,
     required: true,
   },
-  avatarOriginalName: {
+  avatar: {
     type: String,
     required: false,
-  },
-  avatarName: {
-    type: String,
-    required: false,
-  },
+  }
 } , {
   timestamps: true,
 });

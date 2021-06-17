@@ -6,6 +6,7 @@ const tmpFolder = path.resolve(__dirname, '..', '..', '..', 'tmp/uploads/users')
 console.log(tmpFolder);
 
 const uploadCelke = {
+  directory: tmpFolder,
   destination: tmpFolder,
   storage: multer.diskStorage({
     destination: function(request, file, callback){
@@ -19,6 +20,13 @@ const uploadCelke = {
       });
     }
    }),
+   fileFilter: (request, file, callback ) => {
+     if(file.mimetype === "image/jpeg" || file.mimetype === "image/jpg" || file.mimetype === "image/png") {
+       return callback(null, true);
+     } else {
+       return callback(null, false);
+     }
+   }
 }
 
 export { uploadCelke };
