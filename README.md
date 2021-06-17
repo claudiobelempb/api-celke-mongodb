@@ -22,6 +22,8 @@ yarn add mongoose-paginate-v2 -S
 #
 yarn add multer -S
 #
+yarn add cors -S
+#
 #
 Dependence - D
 #
